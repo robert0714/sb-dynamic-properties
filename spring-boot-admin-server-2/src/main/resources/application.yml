@@ -1,0 +1,80 @@
+spring:
+  application:
+    name: spring-boot-admin-server-2
+  profiles:
+    active:
+      - secure
+  cloud:
+    inetutils:
+      ignoredInterfaces:
+        - docker0
+        - dummy0
+        - veth.*
+        - enp0s3
+        - lo
+        - eth0
+      preferredNetworks:
+        - 192.168.*.*
+#  boot:
+#    admin:      
+#      context-path: /sba2
+#      discovery:
+#        converter:
+#          health-endpoint-path: /sba2/management/actuator/health
+
+
+# tag::configuration-eureka[]
+eureka:   #<1>
+  instance:
+    leaseRenewalIntervalInSeconds: 10
+#    health-check-url-path: /sba2/management/actuator/health
+  client:
+    registryFetchIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVICE_URL:http://localhost:8761}/eureka/
+      
+logging:
+  file: mylog.log
+  level:
+    de.codecentric.boot.admin.server: DEBUG
+  
+management: 
+#  server:
+#    servlet:
+#      context-path: /sba2/management
+  endpoints:    
+    web:
+#      base-path:  /sba2/actuator      
+      exposure:
+        include: "*"  #<2>
+  endpoint:
+    beans:
+      enabled: true
+    health:
+      show-details: ALWAYS
+    refresh:
+      enabled: true
+# end::configuration-eureka[]
+
+server: 
+  port: 8182
+#  servlet:
+#    context-path: /sba2
+#    path: /sba2
+
+---
+spring:
+  profiles: insecure
+
+---
+spring:
+  profiles: secure
+  security:
+    user:
+      name: "admin"
+      password: "admin"
+eureka:
+  instance:
+    metadata-map:
+      user.name: "admin"         #These two are needed so that the server
+      user.password: "admin" #can access the protected client endpoints
