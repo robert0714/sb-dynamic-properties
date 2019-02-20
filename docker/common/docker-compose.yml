@@ -2,7 +2,7 @@ version: '2'
 services:
   eurekaserver:
      container_name: eurekaService
-     image:  robert0714/maas-eurekaserver:1.0    
+     image:  robert0714/eurekaserver:2.1.3.RELEASE
      network_mode:  "host"
      environment:
          server.port: "8761"
@@ -12,41 +12,26 @@ services:
          spring.cloud.discovery.enabled: "true"
          spring.cloud.config.server.encrypt.enabled: "false"
          TZ: Asia/Taipei
-  configserver:
-      container_name:  configService
-      image: robert0714/maas-configserver:1.0      
-      network_mode:  "host"
-      environment:
-         spring.profiles.active: "default"
-         server.port: "8888"
-         spring.cloud.config.uri: "http://localhost:8888"  
-         ENCRYPT_KEY:       "IMSYMMETRIC"
-         eureka.client.enabled: "true"
-         eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka
-         spring.boot.admin.url: http://localhost:8181/sba
-         spring.cloud.discovery.enabled: "true"
-         spring.cloud.config.server.encrypt.enabled: "false"
-         spring.cloud.config.server.git.uri:  https://github.com/robert0714/maas-config-repo/
-         spring.cloud.config.server.git.searchPaths:  authentication-service
-         ENCRYPT_KEY:       "IMSYMMETRIC"
-         TZ: Asia/Taipei
-      depends_on:
-           - "eurekaserver"
-  zuulserver:
-      container_name:  zuulService
-      image: robert0714/maas-apigateway:0.0.1-SNAPSHOT
-      network_mode:  "host"
-      environment:
-        spring.profiles.active: "default"
-        server.port: "5555"
-        spring.cloud.config.uri: "http://localhost:8888"  
-        eureka.client.enabled: "true"
-        eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka
-        spring.boot.admin.url: http://localhost:8181/sba
-        TZ: Asia/Taipei
-      depends_on:
-           - "eurekaserver"
-           - "configserver"
+#  configserver:
+#      container_name:  configService
+#      image: robert0714/maas-configserver:1.0      
+#      network_mode:  "host"
+#      environment:
+#         spring.profiles.active: "default"
+#         server.port: "8888"
+#         spring.cloud.config.uri: "http://localhost:8888"  
+#         ENCRYPT_KEY:       "IMSYMMETRIC"
+#         eureka.client.enabled: "true"
+#         eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka
+#         spring.boot.admin.url: http://localhost:8181/sba
+#         spring.cloud.discovery.enabled: "true"
+#         spring.cloud.config.server.encrypt.enabled: "false"
+#         spring.cloud.config.server.git.uri:  https://github.com/robert0714/maas-config-repo/
+#         spring.cloud.config.server.git.searchPaths:  authentication-service
+#         ENCRYPT_KEY:       "IMSYMMETRIC"
+#         TZ: Asia/Taipei
+#      depends_on:
+#           - "eurekaserver"  
   zipkin:
     image: openzipkin/zipkin
     container_name:  zipkin
@@ -61,199 +46,19 @@ services:
       eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka
       spring.boot.admin.url: http://localhost:8181/sba
       TZ: Asia/Taipei
-      STORAGE_TYPE: mem
-        
-      
-  kafkaserver:
-     container_name:  kafkaService
-     image: spotify/kafka
-#    mem_limit: 1073741824
-     network_mode:  "host"
-     environment:
-       - TZ=Asia/Taipei
-#    ports:
-#      - 2181:2181
-#      - 9092:9092
-   
-  redis:
-    container_name:  redisService
-#     image: redis:alpine
-    image: sameersbn/redis:latest
-    command:
-    - --loglevel warning
-#    volumes:
-#    - $PWD/redis:/var/lib/redis:Z
-    network_mode:  "host"
-    environment:
-       - TZ=Asia/Taipei
-#    ports:
-#      - 6379:6379 
-  authservice:
-      container_name:  authService
-      image: robert0714/maas-authentication:dev
-      network_mode:  "host"
-      environment:
-        spring.profiles.active: "default"
-        server.port: "8189" 
-        spring.cloud.config.uri: "http://localhost:8888" 
-        eureka.client.enabled: "true"
-        eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka
-        ENCRYPT_KEY:       "IMSYMMETRIC" 
-        signing.key: "345345fsdfsf5345"
-        spring.boot.admin.url: http://localhost:8181/sba
-        signing.key: "345345fsdfsf5345"        
-        spring.datasource.testWhileIdle: "true"
-        spring.datasource.validationQuery: "SELECT 1"
-        spring.datasource.url: "jdbc:mysql://127.0.0.1:3306/ec?characterEncoding=utf8"
-        spring.datasource.username: chain
-        spring.datasource.password: "{cipher}9390b73b7bc8dddb8d9a5da31a92a998624ff943b81db076bb9711ff26d9bfc1"
-        spring.datasource.driver-class-name: "com.mysql.jdbc.Driver"
-        TZ: Asia/Taipei
-      depends_on:
-        - "eurekaserver"
-        - "configserver"
-  fcmservice:
-      container_name:  fcmService
-      image: robert0714/maas-fcm-service:dev
-      network_mode:  "host"
-      environment:
-        spring.profiles.active: "default"
-        server.port: "8190" 
-        spring.cloud.config.uri: "http://localhost:8888" 
-        eureka.client.enabled: "true"
-        eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka
-        spring.boot.admin.url: http://localhost:8181/sba
-        TZ: Asia/Taipei
-      depends_on:
-        - "eurekaserver"
-        - "configserver"
-  adminweb:
-      container_name:  adminWebService
-      image: robert0714/platform-admin:dev
-      network_mode:  "host"
-      environment:
-        spring.profiles.active: "default" 
-        spring.cloud.config.uri: "http://localhost:8888" 
-        eureka.client.enabled: "true"
-        eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka
-        spring.boot.admin.url: http://localhost:8181/sba
-        TZ: Asia/Taipei
-      depends_on:
-        - "eurekaserver"
-        - "configserver"
-        - "napi"
-  napi:
-      container_name:  mainApiService
-      image: robert0714/platform-napi:dev
-      network_mode:  "host"
-      environment:
-        spring.profiles.active: "default"
-        server.port: "8080" 
-        spring.cloud.config.uri: "http://localhost:8888" 
-        eureka.client.enabled: "true"
-        eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka
-        spring.boot.admin.url: http://localhost:8181/sba
-        spring.zipkin.baseUrl: http://localhost:9411
-        usestream: "false" 
-        spring.cloud.stream.bindings.output.destination: hamipointTopic
-        spring.cloud.stream.bindings.output.content-type: application/json
-        spring.cloud.stream.kafka.binder.zkNodes: localhost
-        spring.cloud.stream.kafka.binder.brokers: localhost
-        spring.cloud.stream.kafka.binder.defaultBrokerPort: "9092" 
-        spring.cloud.stream.kafka.binder.defaultZkPort: "2181"
-        TZ: Asia/Taipei
-      depends_on:
-        - "eurekaserver"
-        - "configserver"
-  schedule:
-      container_name:  scheduleService
-      image: robert0714/maas-schedule:dev
-      network_mode:  "host"
-      environment:
-        spring.profiles.active: "default"
-        server.port: "8082" 
-        spring.cloud.config.uri: "http://localhost:8888" 
-        eureka.client.enabled: "true"
-        eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka
-        spring.boot.admin.url: http://localhost:8181/sba
-        TZ: Asia/Taipei
-      depends_on:
-        - "eurekaserver"
-        - "configserver"
-  hamiPoint:
-      container_name:  hamiService 
-      image: robert0714/maas-hami-service:dev
-      network_mode:  "host"
-      environment:
-        spring.profiles.active: "default"
-        server.port: "8083" 
-        spring.cloud.config.uri: "http://localhost:8888" 
-        eureka.client.enabled: "true"
-        eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka
-        spring.boot.admin.url: http://localhost:8181/sba
-        spring.data.mongodb.uri: mongodb://127.0.0.1:27017/ec
-        usestream: "true" 
-        spring.cloud.stream.bindings.input.destination: hamipointTopic
-        spring.cloud.stream.bindings.input.content-type: application/json
-        spring.cloud.stream.kafka.binder.zkNodes: localhost
-        spring.cloud.stream.kafka.binder.brokers: localhost
-        spring.cloud.stream.kafka.binder.defaultBrokerPort: "9092" 
-        spring.cloud.stream.kafka.binder.defaultZkPort: "2181"
-        redis.server: localhost
-        redis.port: "6379"         
-        spring.zipkin.baseUrl: http://localhost:9411
-        TZ: Asia/Taipei
-      depends_on:
-        - "eurekaserver"
-        - "configserver"
-  ptx:
-      container_name:  ptxService 
-      image: robert0714/maas-ptx-service:dev
-      network_mode:  "host"
-      environment:
-        spring.profiles.active: "default"
-        server.port: "8084" 
-        spring.cloud.config.uri: "http://localhost:8888" 
-        eureka.client.enabled: "true"
-        eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka
-        spring.boot.admin.url: http://localhost:8181/sba
-        spring.data.mongodb.uri: mongodb://127.0.0.1:27017/ec
-        usestream: "false"        
-        redis.server: localhost
-        redis.port: "6379"         
-        spring.zipkin.baseUrl: http://localhost:9411
-        TZ: Asia/Taipei
-      depends_on:
-        - "eurekaserver"
-        - "configserver"   
-  sba:
-      container_name:  springBootAdminService
-      image:  robert0714/spring-boot-admin-server:dev 
-      network_mode:  "host"
-      environment:
-        spring.profiles.active: "default"
-        server.port: "8181" 
-        spring.cloud.config.uri: "http://localhost:8888" 
-        eureka.client.enabled: "true"
-        eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka
-        spring.boot.admin.url: http://localhost:8181/sba
-        server.contextPath: /sba 
-        management.context-path: /sba
-        TZ: Asia/Taipei
-      depends_on:
-        - "eurekaserver"
+      STORAGE_TYPE: mem   
   sba2:      
-      image: robert0714/spring-boot-admin-server-2:dev
+      image: robert0714/spring-boot-admin-server-2:2.1.3
       container_name: sba2
       network_mode:  "host"
       environment:
-        spring.profiles.active: "default"
+        spring.profiles.active: "secure"
         server.port: "8182" 
         spring.cloud.config.uri: "http://localhost:8888" 
         eureka.client.enabled: "true"
         eureka.client.serviceUrl.defaultZone: http://localhost:8761/eureka
-        spring.boot.admin.url: http://localhost:8182/sba2       
-        spring.boot.admin.context-path: /sba2
+#        spring.boot.admin.url: http://localhost:8182/sba2       
+#        spring.boot.admin.context-path: /sba2
         TZ: Asia/Taipei
       depends_on:
         - "eurekaserver"     

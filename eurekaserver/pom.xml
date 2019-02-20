@@ -40,7 +40,7 @@
 			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
 		</dependency>
 	</dependencies>
-	<build>		 
+	<build>
 		<plugins>
 			<plugin>
 				<groupId>io.fabric8</groupId>
@@ -49,7 +49,7 @@
 				<configuration>
 					<images>
 						<image>
-							<name>${docker.repository.name}:${project.version}</name>
+							<name>${docker.repository.name}:${docker.version}</name>
 							<alias>${project.artifactId}</alias>
 							<build>
 								<from>library/openjdk:8u181-jdk</from>
@@ -157,12 +157,13 @@
 	</dependencyManagement>
 	<profiles>
 		<profile>
-			<id>chain</id>
+			<id>develop</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<docker.registry.name></docker.registry.name>
+				<docker.version>${project.parent.version}</docker.version>
 			</properties>
 		</profile>
 		<profile>
@@ -230,23 +231,6 @@
 				<docker.registry.name>172.21.11.63:5000/</docker.registry.name>
 			</properties>
 		</profile>
-		<profile>
-			<id>lab-docker</id>
-			<properties>
-				<docker.registry.name>172.21.3.105:5000/</docker.registry.name>
-			</properties>
-		</profile>
-		<profile>
-			<id>staging-docker</id>
-			<properties>
-				<docker.registry.name>172.21.1.63:5000/</docker.registry.name>
-			</properties>
-		</profile>
-		<profile>
-			<id>production-docker</id>
-			<properties>
-				<docker.registry.name>172.21.11.63:5000/</docker.registry.name>
-			</properties>
-		</profile>
+		
 	</profiles>
 </project>

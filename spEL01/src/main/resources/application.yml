@@ -3,17 +3,19 @@
 #  oauth2:
 #   resource:
 #      userInfoUri: http://localhost:8901/auth/user
-
-eureka:
+ 
+eureka:   #<1>
   instance:
+    leaseRenewalIntervalInSeconds: 10
     preferIpAddress: true
+#    health-check-url-path: /sba2/management/actuator/health
   client:
+    enabled: true 
+    registryFetchIntervalSeconds: 5
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-    enabled: false 
-                   
+      defaultZone: ${EUREKA_SERVICE_URL:http://localhost:8761}/eureka/            
 #Setting logging levels
 logging:
   file:
@@ -25,3 +27,19 @@ logging:
     
 server:
   port: 8010
+management: 
+#  server:
+#    servlet:
+#      context-path: /sba2/management
+  endpoints:    
+    web:
+#      base-path:  /sba2/actuator      
+      exposure:
+        include: "*"  #<2>
+  endpoint:
+    beans:
+      enabled: true
+    health:
+      show-details: ALWAYS
+    refresh:
+      enabled: true

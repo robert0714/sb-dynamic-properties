@@ -19,7 +19,7 @@ spring:
         - 192.168.*.*
         - 172.21.1.*
   application:
-    name: ptx-service
+    name: test-spring-EL
   profiles:
     active:
       default
@@ -39,3 +39,4 @@ hystrix:
   metrics:
     enabled: true
     polling-interval-ms: 1000      
+ 

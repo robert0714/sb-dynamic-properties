@@ -1,0 +1,46 @@
+# Yureka Server Configuration
+server:
+  port: ${vcap.application.port:8761}   # HTTP port
+info:
+  component: Discovery Server
+
+eureka:
+    instance:
+     #     hostname: localhost
+     #     hostname: 
+          preferIpAddress: true
+          # if registerWithEureka is set to false, eureka.instance.leaseRenewalIntervalInSeconds is set to 30 and run 2 Eureka instance.
+          #  Two Eureka instance will send 4 renews to Eureka server per minutes, Eureka server minimal threshold is 1 (written in code),
+          # so the threshold is 5 (this number will be multiply a factor eureka.server.renewalPercentThreshold which will be discussed later).
+          leaseRenewalIntervalInSeconds: 10          
+     #      health-check-url-path: /actuator/health
+          metadata-map:
+            startup: ${random.int}    #needed to trigger info and endpoint update after restart
+    client:
+        registryFetchIntervalSeconds: 5
+        # When only one eureka ,  registerWithEureka and   fetchRegistry  have to be false
+        registerWithEureka: false
+        fetchRegistry: false
+        serviceUrl:
+        #  defaultZone: ${vcap.services.${PREFIX:}eureka.credentials.uri:http://user:password@localhost:8761}/eureka/
+        # defaultZone:  http://172.21.11.31:8761/eureka,http://172.21.11.32:8761/eureka
+          defaultZone: http://localhost:8761/eureka/
+    server:
+        waitTimeInMsWhenSyncEmpty: 0
+        enableSelfPreservation: false # only false.. 
+        
+spring:
+  thymeleaf:
+    enabled: false     # Disable Thymeleaf
+  cloud:
+    inetutils:
+      ignoredInterfaces:
+        - docker0
+        - veth.*
+        - enp0s3
+        - lo
+      preferredNetworks:
+        - 192.168.*.*
+        - 172.21.1.*
+  application:
+    name: eureka-server

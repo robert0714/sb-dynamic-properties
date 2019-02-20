@@ -36,7 +36,7 @@ eureka:   #<1>
 logging:
   file: mylog.log
   level:
-    de.codecentric.boot.admin.server: DEBUG
+    de.codecentric.boot.admin.server: info
   
 management: 
 #  server:

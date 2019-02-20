@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -11,7 +12,7 @@
 	<artifactId>configserver</artifactId>
 	<version>1.0</version>
 	<packaging>jar</packaging>
-	<properties>		
+	<properties>
 		<spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
 		<start-class>develop.confsvr.ConfigServerApplication</start-class>
 		<docker.registry.name>localhost:5000/</docker.registry.name>
@@ -19,32 +20,33 @@
 		<docker.host.address>192.168.99.100</docker.host.address>
 		<docker.port>8888</docker.port>
 	</properties>
-	<name>maas-config-server</name> 
+	<name>maas-config-server</name>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-config-server</artifactId>
 		</dependency>
-	
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
-	
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
-	 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<build>	    
+	<build>
 		<plugins>
-		    <plugin>
+			<plugin>
 				<groupId>io.fabric8</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
 				<version>0.28.0</version>
@@ -76,20 +78,17 @@
 								<ports>
 									<port>${docker.port}:8888</port>
 								</ports>
- <!--
-  Sample project for demonstrating the various network modes
-  Call it with 'mvn install' and one of the following profiles:
-  * "container" : Container connecting to another container's network
-  * "bridge"    : Bridge mode
-  * "host"      : Host mode
-  * "custom"    : Custom network 'test-network' (must be created with 'docker network create test-network' in advance)
-  -->
+								<!-- Sample project for demonstrating the various network modes Call 
+									it with 'mvn install' and one of the following profiles: * "container" : 
+									Container connecting to another container's network * "bridge" : Bridge mode 
+									* "host" : Host mode * "custom" : Custom network 'test-network' (must be 
+									created with 'docker network create test-network' in advance) -->
 								<net>host</net>
 								<volumes>
 									<bind>
 										<volume>${user.home}/logs:/logs</volume>
 									</bind>
-								</volumes>								
+								</volumes>
 								<log>
 									<prefix>${project.artifactId}</prefix>
 									<color>cyan</color>
@@ -167,7 +166,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<docker.registry.name></docker.registry.name> 
+				<docker.registry.name></docker.registry.name>
 			</properties>
 		</profile>
 		<profile>
@@ -208,49 +207,49 @@
 		<profile>
 			<id>iisi</id>
 			<properties>
-				<docker.registry.name>192.168.57.29:5000/</docker.registry.name> 
+				<docker.registry.name>192.168.57.29:5000/</docker.registry.name>
 			</properties>
 		</profile>
 		<profile>
 			<id>dev</id>
 			<properties>
-				<docker.registry.name></docker.registry.name> 
+				<docker.registry.name></docker.registry.name>
 			</properties>
 		</profile>
 		<profile>
 			<id>lab</id>
 			<properties>
-				<docker.registry.name>172.21.3.105:5000/</docker.registry.name> 
+				<docker.registry.name>172.21.3.105:5000/</docker.registry.name>
 			</properties>
 		</profile>
 		<profile>
 			<id>staging</id>
 			<properties>
-				<docker.registry.name>172.21.1.63:5000/</docker.registry.name> 
+				<docker.registry.name>172.21.1.63:5000/</docker.registry.name>
 			</properties>
 		</profile>
 		<profile>
 			<id>production</id>
 			<properties>
-				<docker.registry.name>172.21.11.63:5000/</docker.registry.name> 
+				<docker.registry.name>172.21.11.63:5000/</docker.registry.name>
 			</properties>
 		</profile>
 		<profile>
 			<id>lab-docker</id>
 			<properties>
-				<docker.registry.name>172.21.3.105:5000/</docker.registry.name> 
+				<docker.registry.name>172.21.3.105:5000/</docker.registry.name>
 			</properties>
 		</profile>
 		<profile>
 			<id>staging-docker</id>
 			<properties>
-				<docker.registry.name>172.21.1.63:5000/</docker.registry.name> 
+				<docker.registry.name>172.21.1.63:5000/</docker.registry.name>
 			</properties>
 		</profile>
 		<profile>
 			<id>production-docker</id>
 			<properties>
-				<docker.registry.name>172.21.11.63:5000/</docker.registry.name> 
+				<docker.registry.name>172.21.11.63:5000/</docker.registry.name>
 			</properties>
 		</profile>
 	</profiles>

@@ -25,3 +25,8 @@
 /build/
 
 *.log
+/*.log
+*/**/*.log
+*/**/*.gz
+.vscode
+spEL01/mylog.log

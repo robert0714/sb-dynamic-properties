@@ -1,4 +1,8 @@
+server:
+  port: 8888
 spring:
+  application:
+    name: confgig-service
   thymeleaf:
     enabled: false     # Disable Thymeleaf
   sleuth:
@@ -7,13 +11,19 @@ spring:
   cloud:
     config: 
       server:
+        bootstrap: false
+        native:
+          addLabelLocations: true 
+          searchLocations:
+          - file://${user.home}/confgig-service/config-repo  
         encrypt:
           enabled: false
         git:
-          uri: file://${user.home}/maas-cloud-config-repo            
-      enabled: false
+          uri: file://${user.home}/confgig-service/config-repo            
+      enabled: true
       discovery:
-        enabled: true
+        enabled: false
+        serviceId:  confgig-server
     inetutils:
       ignoredInterfaces:
         - docker0
@@ -22,25 +32,96 @@ spring:
         - lo
       preferredNetworks:
         - 192.168.*.*
-        - 172.21.1.*
-  application:
-    name: config
-  profiles:
-    active:
-      default
-  hateoas: 
-    use-hal-as-default-json-media-type: false
-  data:
-    mongodb:
-      uri: mongodb://127.0.0.1:27017/ec
-management:
-  security:
-     enabled: false
-endpoints:
-  shutdown:
-    enabled: true
-    sensitive: false 
+        - 172.21.1.*   
+        
+eureka:   #<1>
+  instance:
+    leaseRenewalIntervalInSeconds: 10
+    preferIpAddress: true
+#    health-check-url-path: /sba2/management/actuator/health
+  client:
+    enabled: true 
+    registryFetchIntervalSeconds: 5
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVICE_URL:http://localhost:8761}/eureka/   
 hystrix:
   metrics:
     enabled: true
-    polling-interval-ms: 1000      
+    polling-interval-ms: 1000
+management: 
+#  server:
+#    servlet:
+#      context-path: /sba2/management
+  server:
+     servlet:
+       context-path: 
+  endpoints:    
+    web:
+#      base-path:  /sba2/actuator      
+      exposure:
+        include: "*"  #<2>
+  endpoint:
+    beans:
+      enabled: true
+    refresh:
+      enabled: true 
+    env:
+      enabled: true 
+    health:
+      enabled: true
+      show-details: ALWAYS
+    heapdump:
+      enabled: true
+    logfile:
+      enabled: true
+    auditevents:
+      enabled: true
+    conditions:
+      enabled: true
+    info:
+      enabled: true
+    jolokia:
+      enabled: true
+    loggers:
+      enabled: true
+    mappings:
+      enabled: true
+    prometheus:
+      enabled: false
+    restart:
+      enabled: true
+    resume:
+      enabled: true
+    metrics:
+      enabled: true
+    scheduledtasks:
+      enabled: true
+    pause:
+      enabled: true
+    service-registry:
+      enabled: true
+    sessions:
+      enabled: true
+    shutdown:
+      enabled: true
+    threaddump:
+      enabled: true
+
+---
+spring:
+  profiles: insecure
+
+---
+spring:
+  profiles: secure
+  security:
+    user:
+      name: "admin"
+      password: "admin"
+eureka:
+  instance:
+    metadata-map:
+      user.name: "admin"         #These two are needed so that the server
+      user.password: "admin" #can access the protected client endpoints
